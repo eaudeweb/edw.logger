@@ -1,37 +1,31 @@
 from datetime import datetime
 import json
 import logging
-import traceback
 
 import transaction
 
 from edw.logger.util import get_user_data
+from edw.logger.decorators import log_errors
 
 logger = logging.getLogger("edw.logger")
 
 
 def __after_conn_close(user_data, url):
 
+    @log_errors("Cannot log transaction commit.")
     def on_close():
-        try:
-            logger.info(json.dumps({
-                "IP": user_data['ip'],
-                "User": user_data['user'],
-                "Date": datetime.now().isoformat(),
-                "URL": url,
-                "Type": 'Commit',
-            }))
-        except Exception:
-            tb = traceback.format_exc()
-            logger.error(json.dumps({
-                "Type": "LogError",
-                "Message": "Cannot log transaction commit.",
-                "Traceback": tb,
-            }))
+        logger.info(json.dumps({
+            "IP": user_data['ip'],
+            "User": user_data['user'],
+            "Date": datetime.now().isoformat(),
+            "URL": url,
+            "Type": 'Commit',
+        }))
 
     return on_close
 
 
+@log_errors("Cannot log transaction commit.")
 def handler_commit(event):
     """ Handle ZPublisher.pubevents.PubBeforeCommit.
         This is the only event where we can intercept a

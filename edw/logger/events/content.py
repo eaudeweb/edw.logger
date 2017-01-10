@@ -7,6 +7,7 @@ import zope.lifecycleevent.interfaces as zci
 from zope.container.interfaces import IContainerModifiedEvent
 
 from edw.logger.util import get_user_data
+
 from edw.logger.events.base import BaseEvent
 from edw.logger.events.interfaces import IPastedObject
 
@@ -16,7 +17,6 @@ class ObjectEvent(BaseEvent):
     """
 
     _action = None
-    _fail_msg = "Could not log object action."
 
     def log(self, obj, event):
         user_data = get_user_data(obj.REQUEST or None)
@@ -28,11 +28,6 @@ class ObjectEvent(BaseEvent):
             "URL": obj.absolute_url(),
             "Type": self._action,
         }
-
-    def fail(self, tb):
-        result = super(ObjectEvent, self).fail(tb)
-        result["EventType"] = self._action
-        return result
 
 
 class ObjectCreatedEvent(ObjectEvent):

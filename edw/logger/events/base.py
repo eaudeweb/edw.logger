@@ -1,18 +1,31 @@
 import abc
 import logging
-import traceback
 import json
 from edw.logger.events import ZOPE_STATUS
+from edw.logger.decorators import LogErrors
 
 logger = logging.getLogger("edw.logger")
+
+
+class CustomLogErrors(LogErrors):
+    def build_error(self, tb):
+        entry = super(CustomLogErrors, self).build_error(tb)
+        entry['EventType'] = self.context._action
+        return entry
+
+
+def log_errors(message):
+    def decorator(func):
+        def wrapped(self, *args, **kwargs):
+            return CustomLogErrors(func, message, context=self)(*args, **kwargs)
+        return wrapped
+    return decorator
 
 
 class BaseEvent(object):
     __metaclass__ = abc.ABCMeta
 
-    _fail_msg = ''
-    _event = None
-
+    @log_errors("Cannot log content action.")
     def __call__(self, context, event):
         if not ZOPE_STATUS['ready']:
             return
@@ -20,24 +33,13 @@ class BaseEvent(object):
         if self._skip(context, event):
             return
 
-        try:
-            result = self.log(context, event)
-            if result:
-                logger.info(json.dumps(result))
-        except:
-            tb = traceback.format_exc()
-            logger.error(json.dumps(self.fail(tb)))
+        result = self.log(context, event)
+        if result:
+            logger.info(json.dumps(result))
 
     @abc.abstractmethod
     def log(self, context, event):
         pass
-
-    def fail(self, tb):
-        return {
-            "Type": "LogError",
-            "Message": self._fail_msg,
-            "Traceback": tb,
-        }
 
     def _skip(self, context, event):
         """ Skip logging.
