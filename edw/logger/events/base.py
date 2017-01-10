@@ -3,7 +3,6 @@ import logging
 import traceback
 import json
 from edw.logger.events import ZOPE_STATUS
-from Products.Five.utilities.interfaces import IMarkerInterfaces
 
 logger = logging.getLogger("edw.logger")
 
@@ -17,8 +16,6 @@ class BaseEvent(object):
     def __call__(self, context, event):
         if not ZOPE_STATUS['ready']:
             return
-
-        print(IMarkerInterfaces(event).getInterfaceNames())
 
         if self._skip(context, event):
             return
