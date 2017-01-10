@@ -9,6 +9,12 @@
     handler=".handler_zope_ready"
   />
 
+  <!-- Publisher before commit. -->
+  <subscriber
+    for="ZPublisher.pubevents.PubBeforeCommit"
+    handler=".db_commit.handler_commit"
+  />
+
   <subscriber
     for="* Products.PluggableAuthService.interfaces.events.IUserLoggedInEvent"
     handler=".user.handler_login"
