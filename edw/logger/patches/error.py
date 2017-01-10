@@ -40,7 +40,7 @@ def error_logger(self, info):
         "Traceback": tb_text,
     }
 
-    logger.info(json.dumps(data))
+    logger.error(json.dumps(data))
 
 
 def error_wrapper(meth):

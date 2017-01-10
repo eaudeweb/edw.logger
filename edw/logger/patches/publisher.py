@@ -6,7 +6,6 @@ from zope.publisher.browser import BrowserView
 from Products.PageTemplates.PageTemplate import PageTemplate
 from edw.logger.util import get_ip
 
-
 logger = logging.getLogger("edw.logger")
 
 
@@ -18,9 +17,6 @@ def traverse_wrapper(meth):
         try:
             obj = meth(self, *args, **kwargs)
             try:
-                if inspect.ismethod(obj):
-                    return obj
-
                 user = self.get('AUTHENTICATED_USER')
                 username = user.getUserName()
                 if username == 'Anonymous User':
@@ -29,14 +25,13 @@ def traverse_wrapper(meth):
                     partition = 'Authenticated'
 
                 kv = {
-                        'User': username,
-                        'IP': get_ip(self),
-                        'URL': self.URL,
-                        'Partition': partition,
-                        'Type': 'Traverse',
-                        'Date': datetime.now().isoformat(),
-                        }
-
+                    'User': username,
+                    'IP': get_ip(self),
+                    'URL': self.URL,
+                    'Partition': partition,
+                    'Type': 'Traverse',
+                    'Date': datetime.now().isoformat(),
+                }
 
                 # Old school CMF style page template
                 if isinstance(obj, PageTemplate):
@@ -53,6 +48,13 @@ def traverse_wrapper(meth):
                         kv['Controller'] = obj.context.meta_type
                     kv['Object'] = obj.context.absolute_url()
 
+                # ZMI
+                elif (inspect.ismethod(obj) and
+                      hasattr(obj.im_self, 'meta_type')):
+                    kv['Controller'] = obj.__name__
+                else:
+                    kv['Controller'] = obj.aq_parent.meta_type
+
                 if 'Controller' not in kv:
                     return obj
 
@@ -68,6 +70,6 @@ def traverse_wrapper(meth):
 
 
 from ZPublisher.BaseRequest import BaseRequest
+
 BaseRequest.orig_traverse = BaseRequest.traverse
 BaseRequest.traverse = traverse_wrapper(BaseRequest.orig_traverse)
-
