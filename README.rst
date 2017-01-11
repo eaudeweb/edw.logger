@@ -16,17 +16,13 @@ Installation
 Introduction
 ============
 
-This package creates a new logfile in var/log. Logging is done in JSON format.
-
-The folowing events are logged:
+This package creates a new `edw.logger` log facility that logs to
+INFO and ERROR the following events:
 
     * Login (not available for default Zope ACL)
     * Viewed pages
-    * Added content
-    * Created content
-    * Modified content
-    * Copied content
-    * Moved content
-    * Deleted content
+    * Added/Created content
+    * Copied/Moved/Deleted content
+    * ZODB commits
     * Raised errors
 
