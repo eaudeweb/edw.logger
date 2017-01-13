@@ -10,7 +10,8 @@ logger = logging.getLogger("edw.logger")
 
 IGNORED_CTS = (
     'text/css',
-    'image/'
+    'image/',
+    'javascript',
 )
 
 

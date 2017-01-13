@@ -15,9 +15,9 @@ class LogErrors(object):
         try:
             if self.context:
                 # It's an instance method. First argument is 'self'.
-                self.func(self.context, *args, **kwargs)
+                return self.func(self.context, *args, **kwargs)
             else:
-                self.func(*args, **kwargs)
+                return self.func(*args, **kwargs)
         except:
             tb = traceback.format_exc()
             self.log_error(tb)

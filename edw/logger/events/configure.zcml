@@ -15,11 +15,7 @@
     handler=".db_commit.handler_commit"
   />
 
-  <subscriber
-    for="* Products.PluggableAuthService.interfaces.events.IUserLoggedInEvent"
-    handler=".user.handler_login"
-  />
-
+  <!-- Content actions -->
   <subscriber
     for="OFS.interfaces.IItem zope.lifecycleevent.interfaces.IObjectAddedEvent"
     handler=".content.handler_added"

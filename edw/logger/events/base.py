@@ -26,9 +26,15 @@ class BaseEvent(object):
     __metaclass__ = abc.ABCMeta
 
     @log_errors("Cannot log content action.")
-    def __call__(self, context, event):
+    def __call__(self, *args):
         if not ZOPE_STATUS['ready']:
             return
+
+        if len(args) == 1:
+            event = args[0]
+            context = None
+        else:
+            context, event = args
 
         if self._skip(context, event):
             return
