@@ -8,7 +8,7 @@ setup(
     version=version,
     description="Zope logging package.",
     long_description=(
-        open("README.txt").read() + "\n" +
+        open("README.rst").read() + "\n" +
         open(os.path.join("docs", "HISTORY.txt")).read()
     ),
     # Get more strings from

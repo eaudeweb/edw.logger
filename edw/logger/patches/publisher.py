@@ -8,6 +8,19 @@ from edw.logger.util import get_ip
 
 logger = logging.getLogger("edw.logger")
 
+IGNORED_CTS = (
+    'text/css',
+    'image/'
+)
+
+
+def skip_contenttype(content_type):
+    if not content_type:
+        return
+    for ct in IGNORED_CTS:
+        if ct in content_type:
+            return True
+
 
 def traverse_wrapper(meth):
     """Extract some basic info about the object and view. traverse method
@@ -28,6 +41,7 @@ def traverse_wrapper(meth):
                     'User': username,
                     'IP': get_ip(self),
                     'URL': self.URL,
+                    'ACTUAL_URL': self.ACTUAL_URL,
                     'Partition': partition,
                     'Type': 'Traverse',
                     'Date': datetime.now().isoformat(),
@@ -49,16 +63,25 @@ def traverse_wrapper(meth):
                     kv['Object'] = obj.context.absolute_url()
 
                 # ZMI
-                elif (inspect.ismethod(obj) and
-                      hasattr(obj.im_self, 'meta_type')):
-                    kv['Controller'] = obj.__name__
+                elif inspect.ismethod(obj):
+                    # skip content type based on file content type
+                    content_type = getattr(obj.im_self, 'content_type', None)
+                    if skip_contenttype(content_type):
+                        return obj
+
+                    if hasattr(obj.im_self, 'meta_type'):
+                        kv['Controller'] = obj.im_self.meta_type
+
                 else:
                     kv['Controller'] = obj.aq_parent.meta_type
 
                 if 'Controller' not in kv:
                     return obj
 
-                logger.info(json.dumps(kv))
+                # skip content type based on request header
+                if not skip_contenttype(self.HTTP_ACCEPT):
+                    logger.info(json.dumps(kv))
+
                 return obj
             except:
                 return obj
