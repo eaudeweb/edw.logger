@@ -46,6 +46,7 @@ def traverse_wrapper(meth):
                     'Partition': partition,
                     'Type': 'Traverse',
                     'Date': datetime.now().isoformat(),
+                    'LoggerName': logger.name
                 }
 
                 # Old school CMF style page template

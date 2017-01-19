@@ -8,7 +8,7 @@ from zope.container.interfaces import IContainerModifiedEvent
 
 from edw.logger.util import get_user_data
 
-from edw.logger.events.base import BaseEvent
+from edw.logger.events.base import BaseEvent, logger
 from edw.logger.events.interfaces import IPastedObject
 
 
@@ -27,6 +27,7 @@ class ObjectEvent(BaseEvent):
             "Date": datetime.now().isoformat(),
             "URL": obj.absolute_url(),
             "Type": self._action,
+            "LoggerName": logger.name
         }
 
 

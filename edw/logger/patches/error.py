@@ -38,6 +38,7 @@ def error_logger(self, info):
         "URL": url,
         "ErrorType": strtype,
         "Traceback": tb_text,
+        "LoggerName": logger.name
     }
 
     logger.error(json.dumps(data))

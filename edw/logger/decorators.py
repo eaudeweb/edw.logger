@@ -30,6 +30,7 @@ class LogErrors(object):
             "Type": "LogError",
             "Message": self.message,
             "Traceback": tb,
+            "LoggerName": logger.name
         }
 
 
