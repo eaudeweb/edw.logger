@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.1.dev0 - (unreleased)
------------------------
+1.1 - (2017-01-19)
+------------------
 - Added LoggerName in the JSON object [refs #80663 olimpiurob]
 
 1.0 - (2017-01-17)
