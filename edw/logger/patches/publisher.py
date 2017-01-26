@@ -14,6 +14,8 @@ IGNORED_CTS = (
     'javascript',
 )
 
+KNOWN_METHODS = ('GET', 'POST')
+
 
 def skip_contenttype(content_type):
     if not content_type:
@@ -31,6 +33,11 @@ def traverse_wrapper(meth):
         try:
             obj = meth(self, *args, **kwargs)
             try:
+                if self.method not in KNOWN_METHODS:
+                    # Ignore requests we don't handle.
+                    # Things like HEAD and OPTIONS from health checkers
+                    # can really spam the log.
+                    return obj
                 user = self.get('AUTHENTICATED_USER')
                 username = user.getUserName()
                 if username == 'Anonymous User':
