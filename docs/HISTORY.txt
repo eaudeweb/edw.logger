@@ -1,8 +1,10 @@
 Changelog
 =========
 
-1.2.dev0 - (unreleased)
------------------------
+1.2 - (2017-01-26)
+------------------
+- Ignore all but GET and POST requests.
+  [batradav]
 
 1.1 - (2017-01-19)
 ------------------
