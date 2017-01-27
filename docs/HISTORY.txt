@@ -3,6 +3,8 @@ Changelog
 
 1.3.dev0 - (unreleased)
 -----------------------
+- Add 'font' to ignored content types.
+  [batradav]
 
 1.2 - (2017-01-26)
 ------------------

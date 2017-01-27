@@ -12,6 +12,7 @@ IGNORED_CTS = (
     'text/css',
     'image/',
     'javascript',
+    'font',
 )
 
 KNOWN_METHODS = ('GET', 'POST')
