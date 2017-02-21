@@ -37,7 +37,7 @@ def error_logger(self, info):
         "Type": "Error",
         "URL": url,
         "ErrorType": strtype,
-        "Traceback": tb_text,
+        "Traceback": tb_text.decode('utf-8', 'ignore').encode('utf-8'),
         "LoggerName": logger.name
     }
 
