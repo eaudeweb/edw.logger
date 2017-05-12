@@ -2,11 +2,13 @@ import logging
 import inspect
 import json
 from datetime import datetime
+from zope.contenttype import guess_content_type
 from zope.publisher.browser import BrowserView
 from Products.PageTemplates.PageTemplate import PageTemplate
 from edw.logger.util import get_ip
 
 logger = logging.getLogger("edw.logger")
+
 
 IGNORED_CTS = (
     'text/css',
@@ -15,15 +17,27 @@ IGNORED_CTS = (
     'font',
 )
 
+
+IGNORED_URLS = (
+    'health.check',
+)
+
+
 KNOWN_METHODS = ('GET', 'POST')
 
 
 def skip_contenttype(content_type):
-    if not content_type:
-        return
-    for ct in IGNORED_CTS:
-        if ct in content_type:
-            return True
+    return any(tuple(ct in content_type for ct in IGNORED_CTS))
+
+
+def skip_url(url):
+    return any(tuple(url.endswith(u) for u in IGNORED_URLS))
+
+
+URL_VALIDATORS = (
+    lambda url: skip_contenttype(guess_content_type(url)[0]),
+    skip_url,
+)
 
 
 def traverse_wrapper(meth):
@@ -75,7 +89,7 @@ def traverse_wrapper(meth):
                 # ZMI
                 elif inspect.ismethod(obj):
                     # skip content type based on file content type
-                    content_type = getattr(obj.im_self, 'content_type', None)
+                    content_type = getattr(obj.im_self, 'content_type', '')
                     if skip_contenttype(content_type):
                         return obj
 
@@ -88,8 +102,8 @@ def traverse_wrapper(meth):
                 if 'Controller' not in kv:
                     return obj
 
-                # skip content type based on request header
-                if not skip_contenttype(self.HTTP_ACCEPT):
+                # skip certain URLs and content types
+                if not any(tuple(v(self.URL) for v in URL_VALIDATORS)):
                     logger.info(json.dumps(kv))
 
                 return obj
