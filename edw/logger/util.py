@@ -3,16 +3,15 @@
 
 
 def get_ip(request):
-    if "HTTP_X_FORWARDED_FOR" in request.environ:
-        # Virtual host
-        ip = request.environ["HTTP_X_FORWARDED_FOR"]
-    elif "HTTP_HOST" in request.environ:
-        # Non-virtualhost
-        ip = request.environ["REMOTE_ADDR"]
-    else:
-        ip = None
+    environ = getattr(request, 'environ', {})
 
-    return ip
+    if "HTTP_X_FORWARDED_FOR" in environ:
+        return environ.get('HTTP_X_FORWARDED_FOR')
+
+    if 'REMOTE_ADDR' in environ:
+        return environ.get('REMOTE_ADDR')
+
+    return environ.get('HTTP_HOST', None)
 
 
 def get_user_data(request):
@@ -21,4 +20,6 @@ def get_user_data(request):
     except AttributeError:
         return dict(user='NO_REQUEST', ip='NO_REQUEST')
 
-    return dict(user=user.getUserName(), ip=get_ip(user.REQUEST))
+    username = getattr(user, 'getUserName', lambda: 'unknown')()
+    req = getattr(user, 'REQUEST', request)
+    return dict(user=username, ip=get_ip(req))
