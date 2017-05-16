@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.6.dev0 - (unreleased)
+-----------------------
+- Nothing changed yet.
+
 1.5 - (2017-05-16)
 ------------------
 - Enable/disable logging via environment variables
