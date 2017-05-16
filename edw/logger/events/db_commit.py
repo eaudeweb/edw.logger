@@ -23,6 +23,7 @@ def __after_conn_close(user_data, url):
             "Date": datetime.now().isoformat(),
             "URL": url,
             "Type": 'Commit',
+            "LoggerName": logger.name,
         }))
 
     return on_close

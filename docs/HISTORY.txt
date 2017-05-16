@@ -3,7 +3,8 @@ Changelog
 
 1.6.dev0 - (unreleased)
 -----------------------
-- Nothing changed yet.
+- Add missing LoggerName on db_commit
+  [avoinea]
 
 1.5 - (2017-05-16)
 ------------------
