@@ -1,8 +1,12 @@
+import os
 import abc
 import logging
 import json
 from edw.logger.events import ZOPE_STATUS
 from edw.logger.decorators import LogErrors
+
+EDW_LOGGER_CONTENT = os.environ.get(
+    "EDW_LOGGER_CONTENT", "true").lower() in ('true', 'yes', 'on')
 
 logger = logging.getLogger("edw.logger")
 
@@ -27,6 +31,9 @@ class BaseEvent(object):
 
     @log_errors("Cannot log content action.")
     def __call__(self, *args):
+        if not EDW_LOGGER_CONTENT:
+            return
+
         if not ZOPE_STATUS['ready']:
             return
 

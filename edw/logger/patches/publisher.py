@@ -1,3 +1,4 @@
+import os
 import logging
 import inspect
 import json
@@ -6,6 +7,9 @@ from zope.contenttype import guess_content_type
 from zope.publisher.browser import BrowserView
 from Products.PageTemplates.PageTemplate import PageTemplate
 from edw.logger.util import get_ip
+
+EDW_LOGGER_PUBLISHER = os.environ.get(
+    'EDW_LOGGER_PUBLISHER', 'true').lower() in ('true', 'yes', 'on')
 
 logger = logging.getLogger("edw.logger")
 
@@ -20,6 +24,7 @@ IGNORED_CTS = (
 
 IGNORED_URLS = (
     'health.check',
+    'varnish_probe',
 )
 
 
@@ -115,8 +120,7 @@ def traverse_wrapper(meth):
 
     return extract
 
-
-from ZPublisher.BaseRequest import BaseRequest
-
-BaseRequest.orig_traverse = BaseRequest.traverse
-BaseRequest.traverse = traverse_wrapper(BaseRequest.orig_traverse)
+if EDW_LOGGER_PUBLISHER:
+    from ZPublisher.BaseRequest import BaseRequest
+    BaseRequest.orig_traverse = BaseRequest.traverse
+    BaseRequest.traverse = traverse_wrapper(BaseRequest.orig_traverse)

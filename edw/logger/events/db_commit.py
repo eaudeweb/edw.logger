@@ -1,11 +1,14 @@
-from datetime import datetime
+import os
 import json
 import logging
-
 import transaction
 
+from datetime import datetime
 from edw.logger.util import get_user_data
 from edw.logger.decorators import log_errors
+
+EDW_LOGGER_DB = os.environ.get(
+    "EDW_LOGGER_DB", "true").lower() in ('true', 'yes', 'on')
 
 logger = logging.getLogger("edw.logger")
 
@@ -33,6 +36,9 @@ def handler_commit(event):
         event where hooks can be placed and ensure they are
         only executed after a true DB commit.
     """
+    if not EDW_LOGGER_DB:
+        return
+
     # get the active transaction
     txn = transaction.get()
 

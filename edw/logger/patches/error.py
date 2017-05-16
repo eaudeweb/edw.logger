@@ -1,3 +1,4 @@
+import os
 import logging
 import json
 from datetime import datetime
@@ -6,6 +7,9 @@ from zExceptions.ExceptionFormatter import format_exception
 from AccessControl.SecurityManagement import getSecurityManager
 
 from edw.logger.util import get_ip
+
+EDW_LOGGER_ERRORS = os.environ.get(
+    'EDW_LOGGER_ERRORS', 'true').lower() in ('true', 'yes', 'on')
 
 
 logger = logging.getLogger("edw.logger")
@@ -53,7 +57,7 @@ def error_wrapper(meth):
 
     return extract
 
-
-from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
-SiteErrorLog.orig_raising = SiteErrorLog.raising
-SiteErrorLog.raising = error_wrapper(SiteErrorLog.raising)
+if EDW_LOGGER_ERRORS:
+    from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
+    SiteErrorLog.orig_raising = SiteErrorLog.raising
+    SiteErrorLog.raising = error_wrapper(SiteErrorLog.raising)
