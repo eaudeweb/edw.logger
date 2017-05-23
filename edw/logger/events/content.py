@@ -19,13 +19,15 @@ class ObjectEvent(BaseEvent):
     _action = None
 
     def log(self, obj, event):
-        user_data = get_user_data(obj.REQUEST or None)
+        req = getattr(obj, 'REQUEST', None)
+        url = getattr(obj, 'absolute_url', lambda: '')()
+        user_data = get_user_data(req)
 
         return {
-            "IP": user_data['ip'],
-            "User": user_data['user'],
+            "IP": user_data.get('ip'),
+            "User": user_data.get('user'),
             "Date": datetime.now().isoformat(),
-            "URL": obj.absolute_url(),
+            "URL": url,
             "Type": self._action,
             "LoggerName": logger.name
         }
