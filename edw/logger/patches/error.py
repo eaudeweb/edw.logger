@@ -34,12 +34,14 @@ def error_logger(self, info):
         url = request.get("URL", None)
         username = user.getUserName()
 
+    action = getattr(url, 'split', lambda sep: [''])('/')[-1]
     data = {
         "IP": get_ip(request),
         "User": username,
         "Date": datetime.now().isoformat(),
         "Type": "Error",
         "URL": url,
+        "Action": action,
         "ErrorType": strtype,
         "Traceback": tb_text.decode('utf-8', 'ignore').encode('utf-8'),
         "LoggerName": logger.name

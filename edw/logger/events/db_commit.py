@@ -17,11 +17,13 @@ def __after_conn_close(user_data, url):
 
     @log_errors("Cannot log transaction commit.")
     def on_close():
+        action = getattr(url, 'split', lambda sep: [''])('/')[-1]
         logger.info(json.dumps({
             "IP": user_data['ip'],
             "User": user_data['user'],
             "Date": datetime.now().isoformat(),
             "URL": url,
+            "Action": action,
             "Type": 'Commit',
             "LoggerName": logger.name,
         }))

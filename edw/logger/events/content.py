@@ -21,6 +21,7 @@ class ObjectEvent(BaseEvent):
     def log(self, obj, event):
         req = getattr(obj, 'REQUEST', None)
         url = getattr(obj, 'absolute_url', lambda: '')()
+        action = getattr(url, 'split', lambda sep: [''])('/')[-1]
         user_data = get_user_data(req)
 
         return {
@@ -28,6 +29,7 @@ class ObjectEvent(BaseEvent):
             "User": user_data.get('user'),
             "Date": datetime.now().isoformat(),
             "URL": url,
+            "Action": action,
             "Type": self._action,
             "LoggerName": logger.name
         }
