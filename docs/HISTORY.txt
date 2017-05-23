@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.8.dev0 - (unreleased)
------------------------
+1.8 - (2017-05-23)
+------------------
 - Fix AttributeError: REQUEST
   [avoinea]
 
@@ -30,7 +30,6 @@ Changelog
 ------------------
 - Fixed cases where traceback contains non-ascii characters
   [olimpiurob refs #82516]
-
 - Add 'font' to ignored content types.
   [batradav]
 
