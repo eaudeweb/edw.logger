@@ -23,3 +23,4 @@ INFO and ERROR the following events:
 * Raised errors - Enabled by default. Can be disabled via environment variable **EDW_LOGGER_ERRORS** (e.g.: *EDW_LOGGER_ERRORS=false*);
 * Added/created/copied/moved/deleted content - Enabled by default. Can be disabled via environment variable **EDW_LOGGER_CONTENT** (e.g.: *EDW_LOGGER_CONTENT=false**);
 * ZODB commits - Enabled by default. Can be disabled via environment variable **EDW_LOGGER_DB** (e.g.: *EDW_LOGGER_DB=false**);
+* Catalog indexing - Enabled by default. Can be disabled via environment variable **EDW_LOGGER_CATALOG** (e.g.: *EDW_LOGGER_CATALOG=false**);
