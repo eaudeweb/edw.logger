@@ -14,7 +14,7 @@ def initialize(context):
     """Initializer called when used as a Zope 2 product."""
 
 
-__ALL__ = (
+__all__ = (
     patches,
     catalog,
     Products.ZCatalog,
