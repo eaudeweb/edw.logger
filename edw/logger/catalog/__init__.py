@@ -50,7 +50,7 @@ def catalog_object(self, obj, *args, **kwargs):
     t_start = time.time()
     old_catalog_object(self, obj, *args, **kwargs)
     dt = time.time() - t_start
-    _log(obj, kwargs, dt)
+    _log(obj, kwargs, float('{0:.4f}'.format(dt)))
 
 
 if EDW_LOGGER_CATALOG:
