@@ -1,8 +1,10 @@
 Changelog
 =========
 
-1.10.dev0 - (unreleased)
-------------------------
+1.10 - (2017-01-18)
+-------------------
+* Add zCatalog catalog_object support. Disabled by default.
+  [batradav]
 
 1.9 - (2017-05-23)
 ------------------
