@@ -15,7 +15,7 @@ def initialize(context):
 
 
 __all__ = (
-    patches,
-    catalog,
-    Products.ZCatalog,
+    'patches',
+    'catalog',
+    'Products',
 )

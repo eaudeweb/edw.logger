@@ -2,7 +2,7 @@ import publisher
 import error
 
 
-__ALL__ = (
-    publisher,
-    error,
+__all__ = (
+    'publisher',
+    'error',
 )
