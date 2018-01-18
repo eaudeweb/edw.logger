@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.11 - (2017-01-18)
+-------------------
+* Fix integer literals in duration report.
+  [batradav]
+
 1.10 - (2017-01-18)
 -------------------
 * Add zCatalog catalog_object support. Disabled by default.
