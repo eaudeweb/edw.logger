@@ -12,7 +12,6 @@ build:
 	python2 setup.py bdist_egg
 
 release: build
-	twine register ./dist/${PACKAGE}-${VERSION}-*.whl
 	twine upload ./dist/${PACKAGE}-${VERSION}-*.whl
 	twine upload ./dist/${PACKAGE}-${VERSION}-*.egg
 
