@@ -38,13 +38,13 @@ def _log(catalog, obj, kwargs, dt):
     idxs = kwargs.get('idxs', 'all')
     metadata = bool(kwargs.get('update_metadata', 1))
 
-    stack = [
-        '{}({}){}'.format(path, line, func)
-        for _, path, line, func, _, _
-        in inspect.stack()
-    ] if EDW_LOGGER_CATALOG_STACK else ''
+    stack = {
+        'Stack_{}'.format(idx): '{}({}){}'.format(path, line, func)
+        for idx, (_, path, line, func, _, _)
+        in enumerate(inspect.stack())
+    } if EDW_LOGGER_CATALOG_STACK else {}
 
-    logger.info(json.dumps({
+    log_dict = {
         "IP": user_data['ip'],
         "User": user_data['user'],
         "Date": datetime.now().isoformat(),
@@ -58,7 +58,9 @@ def _log(catalog, obj, kwargs, dt):
         "Metadata": metadata,
         "Stack": stack,
         "LoggerName": logger.name,
-    }))
+    }
+    log_dict.update(stack)
+    logger.info(json.dumps(log_dict))
 
 
 def catalog_object(self, obj, *args, **kwargs):
