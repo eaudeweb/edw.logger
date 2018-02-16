@@ -2,22 +2,15 @@ import os
 import json
 import logging
 import transaction
-import inspect
 
 from datetime import datetime
 from edw.logger.util import get_user_data
 from edw.logger.decorators import log_errors
 
-
-logger = logging.getLogger("edw.logger")
-
-
 EDW_LOGGER_DB = os.environ.get(
     "EDW_LOGGER_DB", "true").lower() in ('true', 'yes', 'on')
 
-
-EDW_LOGGER_COMMIT_STACK = os.environ.get(
-    'EDW_LOGGER_COMMIT_STACK', 'false').lower() in ('true', 'yes', 'on')
+logger = logging.getLogger("edw.logger")
 
 
 def __after_conn_close(user_data, url):
@@ -25,7 +18,7 @@ def __after_conn_close(user_data, url):
     @log_errors("Cannot log transaction commit.")
     def on_close():
         action = getattr(url, 'split', lambda sep: [''])('/')[-1]
-        log_dict = {
+        logger.info(json.dumps({
             "IP": user_data['ip'],
             "User": user_data['user'],
             "Date": datetime.now().isoformat(),
@@ -33,16 +26,7 @@ def __after_conn_close(user_data, url):
             "Action": action,
             "Type": 'Commit',
             "LoggerName": logger.name,
-        }
-
-        if EDW_LOGGER_COMMIT_STACK:
-            log_dict['Stack'] = [
-                '{}({}){}'.format(path, line, func)
-                for _, path, line, func, _, _
-                in inspect.stack()
-            ]
-
-        logger.info(json.dumps(log_dict))
+        }))
 
     return on_close
 
