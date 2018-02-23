@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.12 - (unreleased)
+-------------------
+* Fix zCatalog idxs and metadata report
+  [avoinea]
+
 1.11 - (2017-01-18)
 -------------------
 * Fix integer literals in duration report.

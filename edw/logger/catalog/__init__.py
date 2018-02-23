@@ -28,21 +28,23 @@ old_catalog_object = ZCatalog.catalog_object
 
 
 @log_errors("Cannot log catalog indexing")
-def _log(catalog, obj, kwargs, dt):
+def _log(catalog, obj, args, kwargs, dt):
     request = getRequest()
 
     url = request.URL
     action = getattr(url, 'split', lambda sep: [''])('/')[-1]
     user_data = get_user_data(request)
 
-    idxs = kwargs.get('idxs', 'all')
-    metadata = bool(kwargs.get('update_metadata', 1))
+    uid = kwargs.get('uid', args[0] if len(args) > 0 else '')
+    idxs = kwargs.get('idxs', args[1] if len(args) > 1 else 'all')
+    metadata = kwargs.get('update_metadata', args[2] if len(args) > 2 else 1)
 
     log_dict = {
         "IP": user_data['ip'],
         "User": user_data['user'],
         "Date": datetime.now().isoformat(),
         "URL": url,
+        "Path": uid,
         "Action": action,
         "Type": 'Catalog',
         "Catalog": catalog.absolute_url(1),
@@ -67,7 +69,7 @@ def catalog_object(self, obj, *args, **kwargs):
     t_start = time.time()
     old_catalog_object(self, obj, *args, **kwargs)
     dt = time.time() - t_start
-    _log(self, obj, kwargs, float('{0:.4f}'.format(dt)))
+    _log(self, obj, args, kwargs, float('{0:.4f}'.format(dt)))
 
 
 if EDW_LOGGER_CATALOG:
