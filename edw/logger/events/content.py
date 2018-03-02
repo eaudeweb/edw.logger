@@ -20,8 +20,15 @@ class ObjectEvent(BaseEvent):
 
     def log(self, obj, event):
         req = getattr(obj, 'REQUEST', None)
-        url = getattr(obj, 'absolute_url', lambda: '')()
-        action = getattr(url, 'split', lambda sep: [''])('/')[-1]
+        try:
+            url = getattr(obj, 'absolute_url', lambda: '')()
+            action = getattr(url, 'split', lambda sep: [''])('/')[-1]
+        except RuntimeError:
+            # Sometimes, the object can be acquisition wrapped to itself,
+            # resulting in a maximum recursion depth exceeded RuntimeError.
+            # This happens when adding a new Plone site, for portlets.
+            url = repr(obj)
+            action = obj.__class__.__name__
         user_data = get_user_data(req)
 
         return {
