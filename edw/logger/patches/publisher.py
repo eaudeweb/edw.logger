@@ -1,17 +1,17 @@
-import os
 import logging
 import inspect
 import json
 from datetime import datetime
+
 from zope.contenttype import guess_content_type
 from zope.publisher.browser import BrowserView
+
 from Products.PageTemplates.PageTemplate import PageTemplate
-from edw.logger.util import get_ip
 
-EDW_LOGGER_PUBLISHER = os.environ.get(
-    'EDW_LOGGER_PUBLISHER', 'true').lower() in ('true', 'yes', 'on')
+from edw.logger.util import get_user_data
 
-logger = logging.getLogger("edw.logger")
+from edw.logger.config import logger
+from edw.logger.config import LOG_PUBLISHER
 
 
 IGNORED_CTS = (
@@ -58,19 +58,14 @@ def traverse_wrapper(meth):
                     # Things like HEAD and OPTIONS from health checkers
                     # can really spam the log.
                     return obj
-                user = self.get('AUTHENTICATED_USER')
-                username = user.getUserName()
-                if username == 'Anonymous User':
-                    partition = 'Anonymous'
-                else:
-                    partition = 'Authenticated'
+                user_data = get_user_data(self)
 
                 kv = {
-                    'User': username,
-                    'IP': get_ip(self),
+                    'User': user_data['user'],
+                    'IP': user_data['ip'],
                     'URL': self.URL,
                     'ACTUAL_URL': self.ACTUAL_URL,
-                    'Partition': partition,
+                    'Partition': user_data['user_type'],
                     'Type': 'Traverse',
                     'Date': datetime.now().isoformat(),
                     'LoggerName': logger.name
@@ -120,7 +115,8 @@ def traverse_wrapper(meth):
 
     return extract
 
-if EDW_LOGGER_PUBLISHER:
+
+if LOG_PUBLISHER:
     from ZPublisher.BaseRequest import BaseRequest
     BaseRequest.orig_traverse = BaseRequest.traverse
     BaseRequest.traverse = traverse_wrapper(BaseRequest.orig_traverse)

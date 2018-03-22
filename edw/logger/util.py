@@ -1,8 +1,15 @@
 """ Utility functions.
 """
 
+from edw.logger.config import LOG_USER_ID
+from edw.logger.config import LOG_USER_IP
 
-def get_ip(request):
+
+def get_user_type(name):
+    return 'Anonymous' if name == 'Anonymous User' else 'Authenticated'
+
+
+def _get_ip(request):
     environ = getattr(request, 'environ', {})
 
     if "HTTP_X_FORWARDED_FOR" in environ:
@@ -14,12 +21,26 @@ def get_ip(request):
     return environ.get('HTTP_HOST', None)
 
 
-def get_user_data(request):
-    try:
-        user = request.get('AUTHENTICATED_USER')
-    except AttributeError:
-        return dict(user='NO_REQUEST', ip='NO_REQUEST')
+def _get_user_id(request):
+    user = request.get('AUTHENTICATED_USER')
+    return getattr(user, 'getUserName', lambda: 'unknown')()
 
-    username = getattr(user, 'getUserName', lambda: 'unknown')()
-    req = getattr(user, 'REQUEST', request)
-    return dict(user=username, ip=get_ip(req))
+
+# If user id or user ip logging is disabled,
+# return the disabled message directly.
+get_ip = _get_ip if LOG_USER_IP else lambda _: 'ip log disabled'
+get_user_id = _get_user_id if LOG_USER_ID else lambda _: 'user log disabled'
+
+
+def get_user_data(request):
+    if request is not None:
+        user_id = get_user_id(request)
+        ip = get_ip(request)
+        # Bypass LOG_USER_ID option in this case, we want to know if the
+        # user is authenticated or not.
+        user_type = get_user_type(_get_user_id(request))
+
+    else:
+        user_id = ip = user_type = 'NO_REQUEST'
+
+    return dict(user=user_id, ip=ip, user_type=user_type)

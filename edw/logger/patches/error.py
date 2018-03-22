@@ -1,4 +1,3 @@
-import os
 import logging
 import json
 from datetime import datetime
@@ -8,11 +7,8 @@ from AccessControl.SecurityManagement import getSecurityManager
 
 from edw.logger.util import get_ip
 
-EDW_LOGGER_ERRORS = os.environ.get(
-    'EDW_LOGGER_ERRORS', 'true').lower() in ('true', 'yes', 'on')
-
-
-logger = logging.getLogger("edw.logger")
+from edw.logger.config import logger
+from edw.logger.config import LOG_ERRORS
 
 
 def error_logger(self, info):
@@ -59,7 +55,8 @@ def error_wrapper(meth):
 
     return extract
 
-if EDW_LOGGER_ERRORS:
+
+if LOG_ERRORS:
     from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
     SiteErrorLog.orig_raising = SiteErrorLog.raising
     SiteErrorLog.raising = error_wrapper(SiteErrorLog.raising)

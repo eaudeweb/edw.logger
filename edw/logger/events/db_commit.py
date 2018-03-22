@@ -1,16 +1,16 @@
-import os
 import json
 import logging
 import transaction
 
 from datetime import datetime
+
+from ZODB.Connection import Connection
+
 from edw.logger.util import get_user_data
 from edw.logger.decorators import log_errors
 
-EDW_LOGGER_DB = os.environ.get(
-    "EDW_LOGGER_DB", "true").lower() in ('true', 'yes', 'on')
-
-logger = logging.getLogger("edw.logger")
+from edw.logger.config import logger
+from edw.logger.config import LOG_DB
 
 
 def __after_conn_close(user_data, url):
@@ -39,7 +39,7 @@ def handler_commit(event):
         event where hooks can be placed and ensure they are
         only executed after a true DB commit.
     """
-    if not EDW_LOGGER_DB:
+    if not LOG_DB:
         return
 
     # get the active transaction
@@ -48,12 +48,12 @@ def handler_commit(event):
     # get needed values now as the request contents will
     # change after commit.
     user_data = get_user_data(event.request)
-    url = event.request.URL
+    url = event.request.get("URL", None)
 
     # transactions that will do a commit have a ZODB.Connection
-    # objects in ``_resources``. Since the transaction has an
+    # object in ``_resources``. Since the transaction has an
     # open connection we know it will be committed.
-    for conn in txn._resources:
+    for conn in (c for c in txn._resources if isinstance(c, Connection)):
         # ZODB.Connection objects support callbacks on close.
         # In this case we wrap the callback in another function
         # so we can also pass in the event.

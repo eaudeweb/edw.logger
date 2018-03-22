@@ -1,4 +1,3 @@
-import os
 import json
 import logging
 import time
@@ -12,16 +11,9 @@ from zope.globalrequest import getRequest
 from edw.logger.util import get_user_data
 from edw.logger.decorators import log_errors
 
-
-logger = logging.getLogger("edw.logger")
-
-
-EDW_LOGGER_CATALOG = os.environ.get(
-    'EDW_LOGGER_CATALOG', 'true').lower() in ('true', 'yes', 'on')
-
-
-EDW_LOGGER_CATALOG_STACK = os.environ.get(
-    'EDW_LOGGER_CATALOG_STACK', 'false').lower() in ('true', 'yes', 'on')
+from edw.logger.config import logger
+from edw.logger.config import LOG_CATALOG
+from edw.logger.config import LOG_CATALOG_STACK
 
 
 old_catalog_object = ZCatalog.catalog_object
@@ -31,7 +23,7 @@ old_catalog_object = ZCatalog.catalog_object
 def _log(catalog, obj, uid, idxs, metadata, dt):
     request = getRequest()
 
-    url = request.URL
+    url = request.get("URL", None)
     action = getattr(url, 'split', lambda sep: [''])('/')[-1]
     user_data = get_user_data(request)
 
@@ -50,7 +42,7 @@ def _log(catalog, obj, uid, idxs, metadata, dt):
         "LoggerName": logger.name,
     }
 
-    if EDW_LOGGER_CATALOG_STACK:
+    if LOG_CATALOG_STACK:
         log_dict['Stack'] = [
             '{}({}){}'.format(path, line, func)
             for _, path, line, func, _, _
@@ -68,6 +60,7 @@ def catalog_object(self, obj, uid=None, idxs=None, update_metadata=1,
     _log(self, obj, uid, idxs, update_metadata, float('{0:.4f}'.format(dt)))
 
 
-if EDW_LOGGER_CATALOG:
+if LOG_CATALOG:
+    # avoid re-patching
     if ZCatalog.catalog_object.__code__ != catalog_object.__code__:
         ZCatalog.catalog_object = catalog_object

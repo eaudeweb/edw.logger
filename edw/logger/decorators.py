@@ -1,8 +1,7 @@
 import traceback
-import logging
 import json
 
-logger = logging.getLogger("edw.logger")
+from edw.logger.config import logger
 
 
 class LogErrors(object):
