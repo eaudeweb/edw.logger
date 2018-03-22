@@ -3,7 +3,7 @@
 
 PACKAGE=edw.logger
 
-VERSION=$(file < version.txt)
+VERSION=$(shell cat version.txt)
 
 all:
 
