@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.14 - (2018-03-22)
+-------------------
+* Fix possible logging errors in catalog and db commits.
+* Disable user and IP logging by default.
+  [batradav]
+
 1.13 - (2018-03-02)
 -------------------
 * Fix logging errors caused by recursive Acquisition wrapped objects
