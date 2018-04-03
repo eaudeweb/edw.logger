@@ -5,6 +5,8 @@ Changelog
 -------------------
 * Fix request call within zc.async context
   [avoinea]
+* Add z3c.autoinclude.plugin support
+  [batradav]
 
 1.14 - (2018-03-22)
 -------------------
