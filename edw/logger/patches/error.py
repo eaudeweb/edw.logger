@@ -1,11 +1,9 @@
-import logging
 import json
 from datetime import datetime
 
 from zExceptions.ExceptionFormatter import format_exception
-from AccessControl.SecurityManagement import getSecurityManager
 
-from edw.logger.util import get_ip
+from edw.logger.util import get_request_data
 
 from edw.logger.config import logger
 from edw.logger.config import LOG_ERRORS
@@ -22,22 +20,16 @@ def error_logger(self, info):
     else:
         tb_text = info[2]
 
-    url = None
-    username = None
     request = getattr(self, 'REQUEST', None)
-    if request:
-        user = getSecurityManager().getUser()
-        url = request.get("URL", None)
-        username = user.getUserName()
+    request_data = get_request_data(request)
 
-    action = getattr(url, 'split', lambda sep: [''])('/')[-1]
     data = {
-        "IP": get_ip(request),
-        "User": username,
+        "IP": request_data['ip'],
+        "User": request_data['user'],
         "Date": datetime.now().isoformat(),
         "Type": "Error",
-        "URL": url,
-        "Action": action,
+        "URL": request_data['url'],
+        "Action": request_data['action'],
         "ErrorType": strtype,
         "Traceback": tb_text.decode('utf-8', 'ignore').encode('utf-8'),
         "LoggerName": logger.name

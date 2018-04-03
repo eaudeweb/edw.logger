@@ -6,7 +6,7 @@ from zope.interface import noLongerProvides
 import zope.lifecycleevent.interfaces as zci
 from zope.container.interfaces import IContainerModifiedEvent
 
-from edw.logger.util import get_user_data
+from edw.logger.util import get_request_data
 
 from edw.logger.events.base import BaseEvent, logger
 from edw.logger.events.interfaces import IPastedObject
@@ -29,11 +29,11 @@ class ObjectEvent(BaseEvent):
             # This happens when adding a new Plone site, for portlets.
             url = repr(obj)
             action = obj.__class__.__name__
-        user_data = get_user_data(req)
+        request_data = get_request_data(req)
 
         return {
-            "IP": user_data.get('ip'),
-            "User": user_data.get('user'),
+            "IP": request_data['ip'],
+            "User": request_data['user'],
             "Date": datetime.now().isoformat(),
             "URL": url,
             "Action": action,

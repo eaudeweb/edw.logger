@@ -1,5 +1,4 @@
 import json
-import logging
 import time
 import inspect
 
@@ -8,7 +7,7 @@ from datetime import datetime
 from Products.ZCatalog.ZCatalog import ZCatalog
 from zope.globalrequest import getRequest
 
-from edw.logger.util import get_user_data
+from edw.logger.util import get_request_data
 from edw.logger.decorators import log_errors
 
 from edw.logger.config import logger
@@ -23,16 +22,14 @@ old_catalog_object = ZCatalog.catalog_object
 def _log(catalog, obj, uid, idxs, metadata, dt):
     request = getRequest()
 
-    url = request.get("URL", None) if request else None
-    action = getattr(url, 'split', lambda sep: [''])('/')[-1]
-    user_data = get_user_data(request)
+    request_data = get_request_data(request)
 
     log_dict = {
-        "IP": user_data['ip'],
-        "User": user_data['user'],
+        "IP": request_data['ip'],
+        "User": request_data['user'],
         "Date": datetime.now().isoformat(),
-        "URL": url,
-        "Action": action,
+        "URL": request_data['url'],
+        "Action": request_data['action'],
         "Type": 'Catalog',
         "Catalog": catalog.absolute_url(1),
         "Object": uid,

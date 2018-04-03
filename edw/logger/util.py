@@ -34,15 +34,23 @@ get_ip = _get_ip if LOG_USER_IP else lambda _: 'ip log disabled'
 get_user_id = _get_user_id if LOG_USER_ID else lambda _: 'user log disabled'
 
 
-def get_user_data(request):
+def get_request_data(request):
     if request is not None:
         user_id = get_user_id(request)
         ip = get_ip(request)
         # Bypass LOG_USER_ID option in this case, we want to know if the
         # user is authenticated or not.
         user_type = get_user_type(_get_user_id(request))
+        url = request.get('URL', 'NO_URL')
 
     else:
-        user_id = ip = user_type = 'NO_REQUEST'
+        user_id = ip = user_type = url = 'NO_REQUEST'
 
-    return dict(user=user_id, ip=ip, user_type=user_type)
+    action = getattr(url, 'split', lambda sep: [''])('/')[-1]
+    return dict(
+        user=user_id,
+        ip=ip,
+        user_type=user_type,
+        url=url,
+        action=action
+    )

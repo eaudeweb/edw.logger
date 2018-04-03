@@ -8,7 +8,7 @@ from zope.publisher.browser import BrowserView
 
 from Products.PageTemplates.PageTemplate import PageTemplate
 
-from edw.logger.util import get_user_data
+from edw.logger.util import get_request_data
 
 from edw.logger.config import logger
 from edw.logger.config import LOG_PUBLISHER
@@ -58,14 +58,14 @@ def traverse_wrapper(meth):
                     # Things like HEAD and OPTIONS from health checkers
                     # can really spam the log.
                     return obj
-                user_data = get_user_data(self)
+                request_data = get_request_data(self)
 
                 kv = {
-                    'User': user_data['user'],
-                    'IP': user_data['ip'],
+                    'User': request_data['user'],
+                    'IP': request_data['ip'],
                     'URL': self.URL,
                     'ACTUAL_URL': self.ACTUAL_URL,
-                    'Partition': user_data['user_type'],
+                    'Partition': request_data['user_type'],
                     'Type': 'Traverse',
                     'Date': datetime.now().isoformat(),
                     'LoggerName': logger.name
