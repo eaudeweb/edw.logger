@@ -23,7 +23,7 @@ old_catalog_object = ZCatalog.catalog_object
 def _log(catalog, obj, uid, idxs, metadata, dt):
     request = getRequest()
 
-    url = request.get("URL", None)
+    url = request.get("URL", None) if request else None
     action = getattr(url, 'split', lambda sep: [''])('/')[-1]
     user_data = get_user_data(request)
 

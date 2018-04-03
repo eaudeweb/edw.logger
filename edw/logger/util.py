@@ -22,7 +22,9 @@ def _get_ip(request):
 
 
 def _get_user_id(request):
-    user = request.get('AUTHENTICATED_USER')
+    if request is None:
+        request = {}
+    user = request.get('AUTHENTICATED_USER', None)
     return getattr(user, 'getUserName', lambda: 'unknown')()
 
 

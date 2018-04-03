@@ -45,10 +45,11 @@ def handler_commit(event):
     # get the active transaction
     txn = transaction.get()
 
+    request = event.request if event.request is not None else {}
     # get needed values now as the request contents will
     # change after commit.
-    user_data = get_user_data(event.request)
-    url = event.request.get("URL", None)
+    user_data = get_user_data(request)
+    url = request.get("URL", None)
 
     # transactions that will do a commit have a ZODB.Connection
     # object in ``_resources``. Since the transaction has an

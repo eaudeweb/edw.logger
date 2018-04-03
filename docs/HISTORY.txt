@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.15 - (2018-04-03)
+-------------------
+* Fix request call within zc.async context
+  [avoinea]
+
 1.14 - (2018-03-22)
 -------------------
 * Fix possible logging errors in catalog and db commits.
