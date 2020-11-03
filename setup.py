@@ -15,7 +15,14 @@ setup(
     # http://pypi.python.org/pypi?:action=list_classifiers
     classifiers=[
         "Programming Language :: Python",
-        "Framework :: Zope2",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Framework :: Zope",
+        "Framework :: Zope :: 2",
+        "Framework :: Zope :: 4"
+        "Framework :: Plone",
+        "Framework :: Plone :: 4.3",
+        "Framework :: Plone :: 5.2",
     ],
     keywords='edw logging package',
     author='David Batranu',
@@ -28,6 +35,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
+        'six',
     ],
     extras_require={
     },

@@ -3,6 +3,8 @@ import inspect
 import json
 from datetime import datetime
 
+import six
+
 from zope.contenttype import guess_content_type
 from zope.publisher.browser import BrowserView
 
@@ -88,13 +90,14 @@ def traverse_wrapper(meth):
 
                 # ZMI
                 elif inspect.ismethod(obj):
+                    obj_self = six.get_method_self(obj)
                     # skip content type based on file content type
-                    content_type = getattr(obj.im_self, 'content_type', '')
+                    content_type = getattr(obj_self, 'content_type', '')
                     if skip_contenttype(content_type):
                         return obj
 
-                    if hasattr(obj.im_self, 'meta_type'):
-                        kv['Controller'] = obj.im_self.meta_type
+                    if hasattr(obj_self, 'meta_type'):
+                        kv['Controller'] = obj_self.meta_type
 
                 else:
                     kv['Controller'] = obj.aq_parent.meta_type

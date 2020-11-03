@@ -1,37 +1,41 @@
 import abc
-import logging
 import json
-from edw.logger.events import ZOPE_STATUS
-from edw.logger.decorators import LogErrors
 
-from edw.logger.config import logger
+import six
+
 from edw.logger.config import LOG_CONTENT
+from edw.logger.config import logger
+from edw.logger.decorators import LogErrors
+from edw.logger.events import ZOPE_STATUS
 
 
 class CustomLogErrors(LogErrors):
     def build_error(self, tb):
         entry = super(CustomLogErrors, self).build_error(tb)
-        entry['EventType'] = self.context._action
+        entry["EventType"] = self.context._action
         return entry
 
 
 def log_errors(message):
     def decorator(func):
         def wrapped(self, *args, **kwargs):
-            return CustomLogErrors(func, message, context=self)(*args, **kwargs)
+            return CustomLogErrors(func, message, context=self)(
+                *args, **kwargs
+            )
+
         return wrapped
+
     return decorator
 
 
+@six.with_metaclass(abc.ABCMeta)
 class BaseEvent(object):
-    __metaclass__ = abc.ABCMeta
-
     @log_errors("Cannot log content action.")
     def __call__(self, *args):
         if not LOG_CONTENT:
             return
 
-        if not ZOPE_STATUS['ready']:
+        if not ZOPE_STATUS["ready"]:
             return
 
         if len(args) == 1:
@@ -52,6 +56,5 @@ class BaseEvent(object):
         pass
 
     def _skip(self, context, event):
-        """ Skip logging.
-        """
+        """Skip logging."""
         return False

@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 
+import six
+
 from zExceptions.ExceptionFormatter import format_exception
 
 from edw.logger.util import get_request_data
@@ -14,7 +16,7 @@ def error_logger(self, info):
     if strtype in self._ignored_exceptions:
         return
 
-    if not isinstance(info[2], basestring):
+    if not isinstance(info[2], six.string_types):
         tb_text = ''.join(
             format_exception(*info, **{'as_html': 0}))
     else:
@@ -31,7 +33,7 @@ def error_logger(self, info):
         "URL": request_data['url'],
         "Action": request_data['action'],
         "ErrorType": strtype,
-        "Traceback": tb_text.decode('utf-8', 'ignore').encode('utf-8'),
+        "Traceback": tb_text.decode('utf-8', 'ignore').encode('utf-8') if six.PY2 else tb_text,
         "LoggerName": logger.name
     }
 

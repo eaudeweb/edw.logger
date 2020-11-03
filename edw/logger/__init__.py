@@ -1,11 +1,11 @@
-import patches
+from . import patches
 
 
 HAVE_ZCATALOG = False
 try:
     import Products.ZCatalog
     HAVE_ZCATALOG = True
-    import catalog
+    from . import catalog
 except ImportError:
     HAVE_ZCATALOG = False
 
