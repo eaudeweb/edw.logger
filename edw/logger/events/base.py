@@ -28,7 +28,7 @@ def log_errors(message):
     return decorator
 
 
-@six.with_metaclass(abc.ABCMeta)
+@six.add_metaclass(abc.ABCMeta)
 class BaseEvent(object):
     @log_errors("Cannot log content action.")
     def __call__(self, *args):
