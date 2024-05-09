@@ -42,7 +42,10 @@ def get_request_data(request):
         # Bypass LOG_USER_ID option in this case, we want to know if the
         # user is authenticated or not.
         user_type = get_user_type(_get_user_id(request))
-        url = request.get("URL", "NO_URL")
+        if isinstance(request, basestring):
+            url = "NO_URL"
+        else:
+            url = request.get("URL", "NO_URL")
 
     else:
         user_id = ip = user_type = url = "NO_REQUEST"
